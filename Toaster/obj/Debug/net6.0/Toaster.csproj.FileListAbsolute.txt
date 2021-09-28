@@ -1,0 +1,15 @@
+F:\C#console\Toaster\Toaster\bin\Debug\net6.0\Toaster.exe
+F:\C#console\Toaster\Toaster\bin\Debug\net6.0\Toaster.deps.json
+F:\C#console\Toaster\Toaster\bin\Debug\net6.0\Toaster.runtimeconfig.json
+F:\C#console\Toaster\Toaster\bin\Debug\net6.0\Toaster.dll
+F:\C#console\Toaster\Toaster\bin\Debug\net6.0\ref\Toaster.dll
+F:\C#console\Toaster\Toaster\bin\Debug\net6.0\Toaster.pdb
+F:\C#console\Toaster\Toaster\obj\Debug\net6.0\Toaster.csproj.AssemblyReference.cache
+F:\C#console\Toaster\Toaster\obj\Debug\net6.0\Toaster.GeneratedMSBuildEditorConfig.editorconfig
+F:\C#console\Toaster\Toaster\obj\Debug\net6.0\Toaster.AssemblyInfoInputs.cache
+F:\C#console\Toaster\Toaster\obj\Debug\net6.0\Toaster.AssemblyInfo.cs
+F:\C#console\Toaster\Toaster\obj\Debug\net6.0\Toaster.csproj.CoreCompileInputs.cache
+F:\C#console\Toaster\Toaster\obj\Debug\net6.0\Toaster.dll
+F:\C#console\Toaster\Toaster\obj\Debug\net6.0\ref\Toaster.dll
+F:\C#console\Toaster\Toaster\obj\Debug\net6.0\Toaster.pdb
+F:\C#console\Toaster\Toaster\obj\Debug\net6.0\Toaster.genruntimeconfig.cache

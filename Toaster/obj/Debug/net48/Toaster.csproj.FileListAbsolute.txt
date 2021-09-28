@@ -1,0 +1,13 @@
+F:\C#console\Toaster\Toaster\bin\Debug\net48\Toaster.exe.config
+F:\C#console\Toaster\Toaster\bin\Debug\net48\Toaster.exe
+F:\C#console\Toaster\Toaster\bin\Debug\net48\Toaster.pdb
+F:\C#console\Toaster\Toaster\bin\Debug\net48\Microsoft.Toolkit.Uwp.Notifications.dll
+F:\C#console\Toaster\Toaster\bin\Debug\net48\System.ValueTuple.dll
+F:\C#console\Toaster\Toaster\obj\Debug\net48\Toaster.csproj.AssemblyReference.cache
+F:\C#console\Toaster\Toaster\obj\Debug\net48\Toaster.GeneratedMSBuildEditorConfig.editorconfig
+F:\C#console\Toaster\Toaster\obj\Debug\net48\Toaster.AssemblyInfoInputs.cache
+F:\C#console\Toaster\Toaster\obj\Debug\net48\Toaster.AssemblyInfo.cs
+F:\C#console\Toaster\Toaster\obj\Debug\net48\Toaster.csproj.CoreCompileInputs.cache
+F:\C#console\Toaster\Toaster\obj\Debug\net48\Toaster.csproj.CopyComplete
+F:\C#console\Toaster\Toaster\obj\Debug\net48\Toaster.exe
+F:\C#console\Toaster\Toaster\obj\Debug\net48\Toaster.pdb
