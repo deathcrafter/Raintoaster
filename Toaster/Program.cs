@@ -1,10 +1,10 @@
-﻿using System;
+﻿using Microsoft.Toolkit.Uwp.Notifications;
+using System;
 using System.Collections;
-using System.Globalization;
 using System.Diagnostics;
+using System.Globalization;
+using System.Threading;
 using System.Windows.Forms;
-using Microsoft.Toolkit.Uwp.Notifications;
-using Windows.ApplicationModel.Activation;
 using Windows.Foundation.Collections;
 
 namespace Toaster
@@ -13,6 +13,7 @@ namespace Toaster
     {
         public const string
             PROGRAMPATH = "--programpath",
+            ARGUMENT = "--bangs",
             TITLE_TEXT = "--title",
             ADAPTIVE_TEXT1 = "--adaptivetext1",
             ADAPTIVE_TEXT2 = "--adaptivetext2",
@@ -28,46 +29,64 @@ namespace Toaster
             BUTTON5 = "--button5",
             INPUT_BOX = "--inputbox";
     }
-    
+
     public class Program
-    { 
+    {
+        internal string str = "";
         public static void Main(string[] args)
         {
+            // Check if app was activated from toast
             bool m = ToastNotificationManagerCompat.WasCurrentProcessToastActivated();
             if (!m)
             {
+                // Parse arguments and create toast
                 ArgumentParser(args);
             }
             else
             {
-                MessageBox.Show("Activated");
+                bool done = false;
+                Process rainmeter = new Process();
+
                 // Listen to notification activation
                 ToastNotificationManagerCompat.OnActivated += toastArgs =>
                 {
                     // Obtain the arguments from the notification
-                    ToastArguments tstargs = ToastArguments.Parse(toastArgs.Argument);
+                    ToastArguments ar = ToastArguments.Parse(toastArgs.Argument);
 
                     // Obtain any user input (text boxes, menu selections) from the notification
                     ValueSet userInput = toastArgs.UserInput;
 
-                    Process pws = new Process();
-                    pws.StartInfo.FileName = "powershell.exe";
-                    pws.Start();
+                    string[] programArgs = ar["arguments"].Split(new string[] { "|" }, 2, StringSplitOptions.RemoveEmptyEntries);
+
+                    rainmeter.StartInfo.FileName = programArgs[0];
+                    if (userInput.ContainsKey("toastInput") && programArgs[1].StartsWith("input=true&"))
+                    {
+                        programArgs[1] = programArgs[1].Remove(0, 11);
+                        string input = (string)userInput["toastInput"];
+                        programArgs[1] = programArgs[1].Replace("$input$", input.Replace("\r", @"#CRLF#"));
+                    }
+
+                    rainmeter.StartInfo.Arguments = programArgs[1];
+                    try
+                    {
+                        rainmeter.Start();
+                        done = true;
+                    }
+                    catch (SystemException exec)
+                    {
+                        MessageBox.Show("Couldn't start program. Error: " + exec);
+                        done = true;
+                    }
                 };
+
+                // Keep the app running until OnActivated event is raised and is completed
+                while (!done)
+                    Thread.Sleep(100);
+                ;
             }
         }
 
-        public static void toastArgs(IActivatedEventArgs e)
-        {
-            if (e is ToastNotificationActivatedEventArgs)
-            {
-                ArgumentParser(new string[] { 
-                    "--title",
-                    "Activated from toast!"
-                });
-            }
-        }
-
+        // Parse the arguments and call Toast
         static void ArgumentParser(string[] args)
         {
             int i = 0;
@@ -132,6 +151,14 @@ namespace Toaster
                     {
                         propHash.Add("InputBox", args[++i]);
                     }
+                    else if (args[i].ToLower() == Properties.PROGRAMPATH)
+                    {
+                        propHash.Add("ProgramPath", args[++i]);
+                    }
+                    else if (args[i].ToLower() == Properties.ARGUMENT)
+                    {
+                        propHash.Add("Argument", args[++i]);
+                    }
                     i++;
                 }
                 if (propHash["Title"] == null)
@@ -142,9 +169,19 @@ namespace Toaster
             }
         }
 
+        // Create the toast from the properties in hash table
         static void Toast(Hashtable propertyHash)
         {
             string appPath = AppDomain.CurrentDomain.BaseDirectory;
+
+            // Set program path as default Rainmeter location
+            string programPath = Environment.GetFolderPath(Environment.SpecialFolder.ProgramFiles) + @"\Rainmeter\Rainmeter.exe";
+
+            if (propertyHash.ContainsKey("ProgramPath"))
+            {
+                if (!string.IsNullOrEmpty((string)propertyHash["ProgramPath"]))
+                    programPath = (string)propertyHash["ProgramPath"];
+            }
             var toastContent = new ToastContentBuilder();
             toastContent.AddText((string)propertyHash["Title"]);
 
@@ -158,15 +195,15 @@ namespace Toaster
             }
             if (propertyHash.ContainsKey("AppLogo"))
             {
-                toastContent.AddAppLogoOverride(new Uri("file://"+appPath+(string)propertyHash["AppLogo"], UriKind.Absolute), ToastGenericAppLogoCrop.Circle);
+                toastContent.AddAppLogoOverride(new Uri("file://" + appPath + (string)propertyHash["AppLogo"], UriKind.Absolute), ToastGenericAppLogoCrop.Circle);
             }
             if (propertyHash.ContainsKey("HeroImage"))
             {
-                toastContent.AddHeroImage(new Uri("file://"+appPath+(string)propertyHash["HeroImage"], UriKind.Absolute));
+                toastContent.AddHeroImage(new Uri("file://" + appPath + (string)propertyHash["HeroImage"], UriKind.Absolute));
             }
             if (propertyHash.ContainsKey("InlineImage"))
             {
-                toastContent.AddInlineImage(new Uri("file://"+appPath+(string)propertyHash["InlineImage"], UriKind.Absolute));
+                toastContent.AddInlineImage(new Uri("file://" + appPath + (string)propertyHash["InlineImage"], UriKind.Absolute));
             }
             if (propertyHash.ContainsKey("Attribution"))
             {
@@ -198,22 +235,26 @@ namespace Toaster
             {
                 toastContent.AddInputTextBox("toastInput", (string)propertyHash["InputBox"]);
             }
-            if (propertyHash.ContainsKey("Button1"))
+            for (int i = 1; i <= 5; i++)
             {
-                string[] button1 = propertyHash["Button1"].ToString().Split(new string[] {"|"},3,StringSplitOptions.RemoveEmptyEntries);
-                ToastButton button1b = new ToastButton().SetContent(button1[0]);
-                if (button1.Length == 2)
+                if (propertyHash.ContainsKey("Button" + i.ToString()))
                 {
-                    button1b.AddArgument("rainpath", button1[1]);
+                    string[] button1 = propertyHash["Button" + i.ToString()].ToString().Split(new string[] { "|" }, 3, StringSplitOptions.RemoveEmptyEntries);
+                    ToastButton button1b = new ToastButton().SetContent(button1[0]);
+                    if (button1.Length == 2)
+                    {
+                        button1b.AddArgument("arguments", programPath + "|" + button1[1]);
+                    }
+                    else
+                        button1b.AddArgument("arguments", programPath + "|" + "[!Log \"Toasted from Raintoast!\"]");
+                    button1b.ActivationType = ToastActivationType.Foreground;
+                    toastContent.AddButton(button1b);
                 }
-                if (button1.Length == 3)
-                {
-                    button1b.AddArgument("bangs", button1[2]);
-                }
-
-                button1b.ActivationType = ToastActivationType.Background;
-                toastContent.AddButton(button1b);
             }
+            if (propertyHash.ContainsKey("Argument"))
+                toastContent.AddArgument("arguments", programPath + "|" + (string)propertyHash["Argument"]);
+            else
+                toastContent.AddArgument("arguments", programPath + "|" + "[!Log \"Toasted from Raintoast!\"]");
             toastContent.Show();
         }
     }

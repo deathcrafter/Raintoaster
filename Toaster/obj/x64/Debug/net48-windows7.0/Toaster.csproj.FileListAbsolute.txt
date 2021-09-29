@@ -1,0 +1,12 @@
+F:\Raintoaster\Toaster\bin\x64\Debug\net48-windows7.0\Toaster.exe.config
+F:\Raintoaster\Toaster\bin\x64\Debug\net48-windows7.0\Toaster.exe
+F:\Raintoaster\Toaster\bin\x64\Debug\net48-windows7.0\Toaster.pdb
+F:\Raintoaster\Toaster\obj\x64\Debug\net48-windows7.0\Toaster.csproj.AssemblyReference.cache
+F:\Raintoaster\Toaster\obj\x64\Debug\net48-windows7.0\Toaster.csproj.SuggestedBindingRedirects.cache
+F:\Raintoaster\Toaster\obj\x64\Debug\net48-windows7.0\Toaster.GeneratedMSBuildEditorConfig.editorconfig
+F:\Raintoaster\Toaster\obj\x64\Debug\net48-windows7.0\Toaster.AssemblyInfoInputs.cache
+F:\Raintoaster\Toaster\obj\x64\Debug\net48-windows7.0\Toaster.AssemblyInfo.cs
+F:\Raintoaster\Toaster\obj\x64\Debug\net48-windows7.0\Toaster.csproj.CoreCompileInputs.cache
+F:\Raintoaster\Toaster\obj\x64\Debug\net48-windows7.0\Toaster.csproj.Fody.CopyLocal.cache
+F:\Raintoaster\Toaster\obj\x64\Debug\net48-windows7.0\Toaster.exe
+F:\Raintoaster\Toaster\obj\x64\Debug\net48-windows7.0\Toaster.pdb

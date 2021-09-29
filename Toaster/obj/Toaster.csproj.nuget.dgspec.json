@@ -8,7 +8,7 @@
       "version": "1.0.0",
       "restore": {
         "projectUniqueName": "F:\\Raintoaster\\Toaster\\Toaster.csproj",
-        "projectName": "Toaster",
+        "projectName": "Raintoaster",
         "projectPath": "F:\\Raintoaster\\Toaster\\Toaster.csproj",
         "packagesPath": "C:\\Users\\sahoo\\.nuget\\packages\\",
         "outputPath": "F:\\Raintoaster\\Toaster\\obj\\",
@@ -40,13 +40,15 @@
         "net48": {
           "targetAlias": "net48",
           "dependencies": {
-            "ILMerge": {
+            "Costura.Fody": {
+              "include": "Runtime, Build, Native, ContentFiles, Analyzers, BuildTransitive",
+              "suppressParent": "All",
               "target": "Package",
-              "version": "[3.0.41, )"
+              "version": "[5.6.0, )"
             },
             "Microsoft.Toolkit.Uwp.Notifications": {
               "target": "Package",
-              "version": "[7.0.2, )"
+              "version": "[7.1.0, )"
             }
           },
           "runtimeIdentifierGraphPath": "C:\\Program Files\\dotnet\\sdk\\6.0.100-rc.1.21463.6\\RuntimeIdentifierGraph.json"

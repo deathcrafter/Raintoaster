@@ -13,9 +13,6 @@
     <SourceRoot Include="C:\Users\sahoo\.nuget\packages\" />
   </ItemGroup>
   <ImportGroup Condition=" '$(ExcludeRestorePackageImports)' != 'true' ">
-    <Import Project="$(NuGetPackageRoot)ilmerge\3.0.41\build\ILMerge.props" Condition="Exists('$(NuGetPackageRoot)ilmerge\3.0.41\build\ILMerge.props')" />
+    <Import Project="$(NuGetPackageRoot)costura.fody\5.6.0\build\Costura.Fody.props" Condition="Exists('$(NuGetPackageRoot)costura.fody\5.6.0\build\Costura.Fody.props')" />
   </ImportGroup>
-  <PropertyGroup Condition=" '$(ExcludeRestorePackageImports)' != 'true' ">
-    <PkgILMerge Condition=" '$(PkgILMerge)' == '' ">C:\Users\sahoo\.nuget\packages\ilmerge\3.0.41</PkgILMerge>
-  </PropertyGroup>
 </Project>

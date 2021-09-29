@@ -4,6 +4,20 @@
     <OutputType>WinExe</OutputType>
     <TargetFramework>net48</TargetFramework>
     <Platforms>AnyCPU;x64</Platforms>
+    <UseWPF>True</UseWPF>
+    <UseWindowsForms>True</UseWindowsForms>
+    <SupportedOSPlatformVersion>10.0.19041.0</SupportedOSPlatformVersion>
+    <AssemblyName>Raintoaster</AssemblyName>
+    <ApplicationIcon>Rainmeter.ico</ApplicationIcon>
+    <NoWin32Manifest>true</NoWin32Manifest>
+    <DebugType>embedded</DebugType>
+    <Company>death.crafter</Company>
+    <Description>An application to toast notifications for Rainmeter desktop customization tool.</Description>
+    <Copyright>©️2021, death.crafter</Copyright>
+    <PackageProjectUrl>https://github.com/deathcrafter/Raintoaster</PackageProjectUrl>
+    <RepositoryUrl>https://github.com/deathcrafter/Raintoaster</RepositoryUrl>
+    <PackageTags>Rainmeter; Toast_notification</PackageTags>
+    <PackageReleaseNotes>Init</PackageReleaseNotes>
   </PropertyGroup>
 
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|AnyCPU'">
@@ -25,8 +39,15 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <PackageReference Include="ILMerge" Version="3.0.41" />
-    <PackageReference Include="Microsoft.Toolkit.Uwp.Notifications" Version="7.0.2" />
+    <Content Include="Rainmeter.ico" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <PackageReference Include="Costura.Fody" Version="5.6.0">
+      <PrivateAssets>all</PrivateAssets>
+      <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
+    </PackageReference>
+    <PackageReference Include="Microsoft.Toolkit.Uwp.Notifications" Version="7.1.0" />
   </ItemGroup>
 
   <ItemGroup>
