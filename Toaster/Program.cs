@@ -105,7 +105,7 @@ namespace Toaster
                         i++;
                         continue;
                     }
-                    else if (args[i].Equals(Properties.ADAPTIVE_TEXT))
+                    else if (args[i].ToLower().Equals(Properties.ADAPTIVE_TEXT))
                     {
                         if (text < 3)
                         {
@@ -115,7 +115,7 @@ namespace Toaster
                             text++;
                         }
                     }
-                    else if (args[i].Equals(Properties.ATTRIBUTION_TEXT))
+                    else if (args[i].ToLower().Equals(Properties.ATTRIBUTION_TEXT))
                     {
                         if (!attribution)
                         {
@@ -125,7 +125,7 @@ namespace Toaster
                             attribution = true;
                         }
                     }
-                    else if (args[i].Equals(Properties.APP_LOGO))
+                    else if (args[i].ToLower().Equals(Properties.APP_LOGO))
                     {
                         if (!applogo)
                         {
@@ -135,7 +135,7 @@ namespace Toaster
                             applogo = true;
                         }
                     }
-                    else if (args[i].Equals(Properties.HERO_IMAGE))
+                    else if (args[i].ToLower().Equals(Properties.HERO_IMAGE))
                     {
                         if (!heroimage)
                         {
@@ -145,7 +145,7 @@ namespace Toaster
                             heroimage = true;
                         }
                     }
-                    else if (args[i].Equals(Properties.INLINE_IMAGE))
+                    else if (args[i].ToLower().Equals(Properties.INLINE_IMAGE))
                     {
                         if (!inlineimg)
                         {
@@ -155,7 +155,7 @@ namespace Toaster
                             inlineimg = true;
                         }
                     }
-                    else if (args[i].Equals(Properties.BUTTON))
+                    else if (args[i].ToLower().Equals(Properties.BUTTON))
                     {
                         if (buttons < 5)
                         {
@@ -173,7 +173,7 @@ namespace Toaster
                             buttons++;
                         }
                     }
-                    else if (args[i].Equals(Properties.INPUT_BOX))
+                    else if (args[i].ToLower().Equals(Properties.INPUT_BOX))
                     {
                         if (input < 5)
                         {
@@ -191,7 +191,7 @@ namespace Toaster
                             input++;
                         }
                     }
-                    else if (args[i].Equals(Properties.SELECTION_BOX))
+                    else if (args[i].ToLower().Equals(Properties.SELECTION_BOX))
                     {
                         if (input < 5)
                         {
@@ -229,7 +229,7 @@ namespace Toaster
                             input++;
                         }
                     }
-                    else if (args[i].Equals(Properties.PROGRAMPATH))
+                    else if (args[i].ToLower().Equals(Properties.PROGRAMPATH))
                     {
                         programpath = args[++i];
                     }

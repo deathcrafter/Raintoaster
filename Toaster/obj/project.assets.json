@@ -5217,9 +5217,9 @@
   "project": {
     "version": "1.0.0",
     "restore": {
-      "projectUniqueName": "F:\\Raintoaster\\Toaster\\Toaster.csproj",
+      "projectUniqueName": "F:\\Raintoaster\\Toaster\\Raintoaster.csproj",
       "projectName": "Raintoaster",
-      "projectPath": "F:\\Raintoaster\\Toaster\\Toaster.csproj",
+      "projectPath": "F:\\Raintoaster\\Toaster\\Raintoaster.csproj",
       "packagesPath": "C:\\Users\\sahoo\\.nuget\\packages\\",
       "outputPath": "F:\\Raintoaster\\Toaster\\obj\\",
       "projectStyle": "PackageReference",

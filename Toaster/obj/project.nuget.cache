@@ -1,8 +1,8 @@
 {
   "version": 2,
-  "dgSpecHash": "TgzcL2qqbLjBq2FNN+5Gx1h3IiHV3Dq9t5tlk6jsNOU5Bgj8IU8EU2cohb2FBduC0kLnxlcn/1251yVDWF923w==",
+  "dgSpecHash": "FcqKFVTDbI+7eHsMkuB5+ItzQwqe+Y4osH3PfjVlLBnx+E8BJIbLKKDPS+sjErirRWTBsF3G/ARKXUhVoFWVJA==",
   "success": true,
-  "projectFilePath": "F:\\Raintoaster\\Toaster\\Toaster.csproj",
+  "projectFilePath": "F:\\Raintoaster\\Toaster\\Raintoaster.csproj",
   "expectedPackageFiles": [
     "C:\\Users\\sahoo\\.nuget\\packages\\costura.fody\\5.6.0\\costura.fody.5.6.0.nupkg.sha512",
     "C:\\Users\\sahoo\\.nuget\\packages\\fody\\6.5.2\\fody.6.5.2.nupkg.sha512",
