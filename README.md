@@ -1,5 +1,5 @@
 # Raintoaster
-An addon to toast notifications for [Rainmeter desktop customization tool](https://www.rainmeter.net).
+An add-on to toast notifications for [Rainmeter desktop customization tool](https://www.rainmeter.net).
 
 # Usage
 This is an app you can use with RunCommand plugin to send toast notifications to users.
