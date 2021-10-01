@@ -1,8 +1,9 @@
 ﻿using Microsoft.Toolkit.Uwp.Notifications;
 using System;
 using System.Collections;
+using System.Collections.Generic;
 using System.Diagnostics;
-using System.Globalization;
+using System.IO;
 using System.Threading;
 using System.Windows.Forms;
 using Windows.Foundation.Collections;
@@ -13,21 +14,16 @@ namespace Toaster
     {
         public const string
             PROGRAMPATH = "--programpath",
-            ARGUMENT = "--bangs",
-            TITLE_TEXT = "--title",
-            ADAPTIVE_TEXT1 = "--adaptivetext1",
-            ADAPTIVE_TEXT2 = "--adaptivetext2",
+            PARAMETER = "--parameter",
+            ADAPTIVE_TEXT = "--text",
             APP_LOGO = "--logo",
             HERO_IMAGE = "--heroimage",
             INLINE_IMAGE = "--inlineimage",
             ATTRIBUTION_TEXT = "--attribution",
             TIMESTAMP = "--timestamp",
-            BUTTON1 = "--button1",
-            BUTTON2 = "--button2",
-            BUTTON3 = "--button3",
-            BUTTON4 = "--button4",
-            BUTTON5 = "--button5",
-            INPUT_BOX = "--inputbox";
+            BUTTON = "--button",
+            INPUT_BOX = "--inputbox",
+            SELECTION_BOX = "--selectionbox";
     }
 
     public class Program
@@ -40,7 +36,7 @@ namespace Toaster
             if (!m)
             {
                 // Parse arguments and create toast
-                ArgumentParser(args);
+                ParseArguments(args);
             }
             else
             {
@@ -59,11 +55,10 @@ namespace Toaster
                     string[] programArgs = ar["arguments"].Split(new string[] { "|" }, 2, StringSplitOptions.RemoveEmptyEntries);
 
                     rainmeter.StartInfo.FileName = programArgs[0];
-                    if (userInput.ContainsKey("toastInput") && programArgs[1].StartsWith("input=true&"))
+
+                    foreach (KeyValuePair<string, object> pair in userInput)
                     {
-                        programArgs[1] = programArgs[1].Remove(0, 11);
-                        string input = (string)userInput["toastInput"];
-                        programArgs[1] = programArgs[1].Replace("$input$", input.Replace("\r", @"#CRLF#"));
+                        programArgs[1] = programArgs[1].Replace("$" + pair.Key + "$", (string)pair.Value);
                     }
 
                     rainmeter.StartInfo.Arguments = programArgs[1];
@@ -82,180 +77,282 @@ namespace Toaster
                 // Keep the app running until OnActivated event is raised and is completed
                 while (!done)
                     Thread.Sleep(100);
-                ;
             }
         }
 
-        // Parse the arguments and call Toast
-        static void ArgumentParser(string[] args)
+        static void ParseArguments(string[] args)
         {
+            int text = 0;
+            bool attribution = false;
+            bool applogo = false;
+            bool heroimage = false;
+            bool inlineimg = false;
+            int buttons = 0;
+            int input = 0;
+            string programpath = Environment.GetFolderPath(Environment.SpecialFolder.ProgramFiles) + @"\Rainmeter\Rainmeter.exe";
+            string parameter = "[!Log \"Toasted from Rainmeter!\"]";
+
+            List<Hashtable> toastContent = new List<Hashtable>();
+
             int i = 0;
-            Hashtable propHash = new Hashtable();
-            if (args.Length >= 1)
+            if (args.Length >= 2)
             {
-                while (i < args.Length)
+                while (i < args.Length - 1)
                 {
-                    if (args[i].ToLower() == Properties.TITLE_TEXT)
+                    Hashtable toastElement = new Hashtable();
+                    if (args[i + 1].StartsWith("--"))
                     {
-                        propHash.Add("Title", args[++i]);
+                        i++;
+                        continue;
                     }
-                    else if (args[i].ToLower() == Properties.ADAPTIVE_TEXT1)
+                    else if (args[i].Equals(Properties.ADAPTIVE_TEXT))
                     {
-                        propHash.Add("Text1", args[++i]);
+                        if (text < 3)
+                        {
+                            toastElement.Add("Type", "Text");
+                            toastElement.Add("Args", args[++i]);
+                            toastContent.Add(toastElement);
+                            text++;
+                        }
                     }
-                    else if (args[i].ToLower() == Properties.ADAPTIVE_TEXT2)
+                    else if (args[i].Equals(Properties.ATTRIBUTION_TEXT))
                     {
-                        propHash.Add("Text2", args[++i]);
+                        if (!attribution)
+                        {
+                            toastElement.Add("Type", "Attribution");
+                            toastElement.Add("Args", args[++i]);
+                            toastContent.Add(toastElement);
+                            attribution = true;
+                        }
                     }
-                    else if (args[i].ToLower() == Properties.APP_LOGO)
+                    else if (args[i].Equals(Properties.APP_LOGO))
                     {
-                        propHash.Add("AppLogo", args[++i]);
+                        if (!applogo)
+                        {
+                            toastElement.Add("Type", "AppLogo");
+                            toastElement.Add("Args", args[++i]);
+                            toastContent.Add(toastElement);
+                            applogo = true;
+                        }
                     }
-                    else if (args[i].ToLower() == Properties.HERO_IMAGE)
+                    else if (args[i].Equals(Properties.HERO_IMAGE))
                     {
-                        propHash.Add("HeroImage", args[++i]);
+                        if (!heroimage)
+                        {
+                            toastElement.Add("Type", "HeroImage");
+                            toastElement.Add("Args", args[++i]);
+                            toastContent.Add(toastElement);
+                            heroimage = true;
+                        }
                     }
-                    else if (args[i].ToLower() == Properties.INLINE_IMAGE)
+                    else if (args[i].Equals(Properties.INLINE_IMAGE))
                     {
-                        propHash.Add("InlineImage", args[++i]);
+                        if (!inlineimg)
+                        {
+                            toastElement.Add("Type", "InlineImage");
+                            toastElement.Add("Args", args[++i]);
+                            toastContent.Add(toastElement);
+                            inlineimg = true;
+                        }
                     }
-                    else if (args[i].ToLower() == Properties.ATTRIBUTION_TEXT)
+                    else if (args[i].Equals(Properties.BUTTON))
                     {
-                        propHash.Add("Attribution", args[++i]);
+                        if (buttons < 5)
+                        {
+                            toastElement.Add("Type", "Button");
+                            List<string> buttonArgs = new List<string>();
+                            while (i < args.Length - 1)
+                            {
+                                if (!args[i + 1].StartsWith("--"))
+                                    buttonArgs.Add(args[++i]);
+                                else
+                                    break;
+                            }
+                            toastElement.Add("Args", buttonArgs.ToArray());
+                            toastContent.Add(toastElement);
+                            buttons++;
+                        }
                     }
-                    else if (args[i].ToLower() == Properties.TIMESTAMP)
+                    else if (args[i].Equals(Properties.INPUT_BOX))
                     {
-                        propHash.Add("Timestamp", args[++i]);
+                        if (input < 5)
+                        {
+                            toastElement.Add("Type", "InputBox");
+                            List<string> inputArgs = new List<string>();
+                            while (i < args.Length - 1)
+                            {
+                                if (!args[i + 1].StartsWith("--"))
+                                    inputArgs.Add(args[++i]);
+                                else
+                                    break;
+                            }
+                            toastElement.Add("Args", inputArgs.ToArray());
+                            toastContent.Add(toastElement);
+                            input++;
+                        }
                     }
-                    else if (args[i].ToLower() == Properties.BUTTON1)
+                    else if (args[i].Equals(Properties.SELECTION_BOX))
                     {
-                        propHash.Add("Button1", args[++i]);
+                        if (input < 5)
+                        {
+                            toastElement.Add("Type", "SelectionBox");
+                            if (i < args.Length - 2 && !args[i + 1].StartsWith("--"))
+                            {
+                                toastElement.Add("Id", args[++i]);
+                            }
+                            List<string[]> selectionItems = new List<string[]>();
+                            string defaultEntry = null;
+                            while (i < args.Length - 1)
+                            {
+                                if (args[i + 1].StartsWith("--")) break;
+                                string[] slArgs = args[++i].Split(new string[] { "|" }, 2, StringSplitOptions.RemoveEmptyEntries);
+                                if (slArgs.Length < 2)
+                                    continue;
+                                if (slArgs[0].StartsWith("&default;"))
+                                {
+                                    slArgs[0] = slArgs[0].Remove(0, 9);
+                                    if (string.IsNullOrEmpty(defaultEntry))
+                                        defaultEntry = slArgs[0];
+                                }
+                                selectionItems.Add(slArgs);
+                            }
+                            if (selectionItems.Count > 5) selectionItems.RemoveRange(6, selectionItems.Count - 5);
+                            if (selectionItems.Count != 0)
+                            {
+                                Hashtable selectionHash = new Hashtable();
+                                if (!string.IsNullOrEmpty(defaultEntry))
+                                    selectionHash.Add("Default", defaultEntry);
+                                selectionHash.Add("List", selectionItems);
+                                toastElement.Add("Args", selectionHash);
+                            }
+                            toastContent.Add(toastElement);
+                            input++;
+                        }
                     }
-                    else if (args[i].ToLower() == Properties.BUTTON2)
+                    else if (args[i].Equals(Properties.PROGRAMPATH))
                     {
-                        propHash.Add("Button2", args[++i]);
+                        programpath = args[++i];
                     }
-                    else if (args[i].ToLower() == Properties.BUTTON3)
+                    else if (args[i].Equals(Properties.PARAMETER))
                     {
-                        propHash.Add("Button3", args[++i]);
-                    }
-                    else if (args[i].ToLower() == Properties.BUTTON4)
-                    {
-                        propHash.Add("Button4", args[++i]);
-                    }
-                    else if (args[i].ToLower() == Properties.BUTTON5)
-                    {
-                        propHash.Add("Button5", args[++i]);
-                    }
-                    else if (args[i].ToLower() == Properties.INPUT_BOX)
-                    {
-                        propHash.Add("InputBox", args[++i]);
-                    }
-                    else if (args[i].ToLower() == Properties.PROGRAMPATH)
-                    {
-                        propHash.Add("ProgramPath", args[++i]);
-                    }
-                    else if (args[i].ToLower() == Properties.ARGUMENT)
-                    {
-                        propHash.Add("Argument", args[++i]);
+                        parameter = args[++i];
                     }
                     i++;
                 }
-                if (propHash["Title"] == null)
-                {
-                    propHash["Title"] = "RainToast";
-                }
-                Toast(propHash);
+                ToastIt(programpath, parameter, toastContent);
             }
         }
 
-        // Create the toast from the properties in hash table
-        static void Toast(Hashtable propertyHash)
+        static void ToastIt(string programpath, string parameter, List<Hashtable> toastContent)
         {
             string appPath = AppDomain.CurrentDomain.BaseDirectory;
 
-            // Set program path as default Rainmeter location
-            string programPath = Environment.GetFolderPath(Environment.SpecialFolder.ProgramFiles) + @"\Rainmeter\Rainmeter.exe";
+            ToastContentBuilder toast = new ToastContentBuilder();
+            toast.AddArgument("arguments", programpath + "|" + parameter);
 
-            if (propertyHash.ContainsKey("ProgramPath"))
-            {
-                if (!string.IsNullOrEmpty((string)propertyHash["ProgramPath"]))
-                    programPath = (string)propertyHash["ProgramPath"];
-            }
-            var toastContent = new ToastContentBuilder();
-            toastContent.AddText((string)propertyHash["Title"]);
+            List<string> inputid = new List<string>();
 
-            if (propertyHash.ContainsKey("Text1"))
+            bool terminated = false;
+
+            foreach (Hashtable ht in toastContent)
             {
-                toastContent.AddText((string)propertyHash["Text1"]);
-            }
-            if (propertyHash.ContainsKey("Text2"))
-            {
-                toastContent.AddText((string)propertyHash["Text2"]);
-            }
-            if (propertyHash.ContainsKey("AppLogo"))
-            {
-                toastContent.AddAppLogoOverride(new Uri("file://" + appPath + (string)propertyHash["AppLogo"], UriKind.Absolute), ToastGenericAppLogoCrop.Circle);
-            }
-            if (propertyHash.ContainsKey("HeroImage"))
-            {
-                toastContent.AddHeroImage(new Uri("file://" + appPath + (string)propertyHash["HeroImage"], UriKind.Absolute));
-            }
-            if (propertyHash.ContainsKey("InlineImage"))
-            {
-                toastContent.AddInlineImage(new Uri("file://" + appPath + (string)propertyHash["InlineImage"], UriKind.Absolute));
-            }
-            if (propertyHash.ContainsKey("Attribution"))
-            {
-                toastContent.AddAttributionText((string)propertyHash["Attribution"]);
-            }
-            if (propertyHash.ContainsKey("Timestamp"))
-            {
-                CultureInfo provider = CultureInfo.InvariantCulture;
-                string[] dateFormats =
+                if (ht["Type"].Equals("Text"))
                 {
-                    "dd-MM-yyyy",
-                    "H:mm:ss",
-                    "H:mm",
-                    "dd-MM-yy",
-                    "dd/MM/yy",
-                    "dd-MM-yy H:mm:ss",
-                    "dd/MM/yy H:mm:ss",
-                    "dd-MM-yyyy H:mm:ss",
-                    "dd/MM/yyyy H:mm:ss",
-                    "dd-MM-yy H:mm",
-                    "dd/MM/yy H:mm",
-                    "dd-MM-yyyy H:mm",
-                    "dd/MM/yyyy H:mm"
-                };
-                DateTime dateTime = DateTime.ParseExact((string)propertyHash["Timestamp"], dateFormats, provider, DateTimeStyles.None);
-                toastContent.AddCustomTimeStamp(dateTime);
-            }
-            if (propertyHash.ContainsKey("InputBox"))
-            {
-                toastContent.AddInputTextBox("toastInput", (string)propertyHash["InputBox"]);
-            }
-            for (int i = 1; i <= 5; i++)
-            {
-                if (propertyHash.ContainsKey("Button" + i.ToString()))
+                    toast.AddText((string)ht["Args"]);
+                }
+                else if (ht["Type"].Equals("Attribution"))
                 {
-                    string[] button1 = propertyHash["Button" + i.ToString()].ToString().Split(new string[] { "|" }, 3, StringSplitOptions.RemoveEmptyEntries);
-                    ToastButton button1b = new ToastButton().SetContent(button1[0]);
-                    if (button1.Length == 2)
+                    toast.AddAttributionText((string)ht["Args"]);
+                }
+                else if (ht["Type"].Equals("AppLogo"))
+                {
+                    string imgPath = appPath + (string)ht["Args"];
+                    if (File.Exists(imgPath))
+                        toast.AddAppLogoOverride(new Uri("file://" + imgPath, UriKind.Absolute), ToastGenericAppLogoCrop.Circle);
+                    else
                     {
-                        button1b.AddArgument("arguments", programPath + "|" + button1[1]);
+                        MessageBox.Show("Image path invalid. App Logo: \"" + imgPath + "\"");
+                        terminated = true;
+                        break;
+                    }
+                }
+                else if (ht["Type"].Equals("HeroImage"))
+                {
+                    string imgPath = appPath + (string)ht["Args"];
+                    if (File.Exists(imgPath))
+                        toast.AddHeroImage(new Uri("file://" + imgPath, UriKind.Absolute));
+                    else
+                    {
+                        MessageBox.Show("Image path invalid. Hero Image: \"" + imgPath + "\"");
+                        terminated = true;
+                        break;
+                    }
+                }
+                else if (ht["Type"].Equals("InlineImage"))
+                {
+                    string imgPath = appPath + (string)ht["Args"];
+                    if (File.Exists(imgPath))
+                        toast.AddInlineImage(new Uri("file://" + imgPath, UriKind.Absolute));
+                    else
+                    {
+                        MessageBox.Show("Image path invalid. Inline Image: \"" + imgPath + "\"");
+                        terminated = true;
+                        break;
+                    }
+                }
+                else if (ht["Type"].Equals("InputBox"))
+                {
+                    string[] args = (string[])ht["Args"];
+                    if (inputid.Contains(args[0]))
+                    {
+                        MessageBox.Show("Input id of elements can not be same.\nPlease change the Input Box id: " + args[0]);
+                        terminated = true;
+                        break;
+                    }
+                    inputid.Add(args[0]);
+                    if (args.Length >= 2)
+                        toast.AddInputTextBox(args[0], args[1]);
+                    else
+                        toast.AddInputTextBox(args[0], "");
+                }
+                else if (ht["Type"].Equals("SelectionBox"))
+                {
+                    if (inputid.Contains((string)ht["Id"]))
+                    {
+                        MessageBox.Show("Input id of elements can not be same.\nPlease change the Selection Box Id: " + (string)ht["Id"]);
+                        terminated = true;
+                        break;
+                    }
+                    inputid.Add((string)ht["Id"]);
+                    Hashtable selectionHash = (Hashtable)ht["Args"];
+                    ToastSelectionBox selBox = new ToastSelectionBox((string)ht["Id"]);
+                    foreach (string[] args in (List<string[]>)selectionHash["List"])
+                    {
+                        ToastSelectionBoxItem selectionBoxItem = new ToastSelectionBoxItem(args[0], args[1]);
+                        selBox.Items.Add(selectionBoxItem);
+                    }
+                    if (selectionHash.ContainsKey("Default"))
+                        selBox.DefaultSelectionBoxItemId = (string)selectionHash["Default"];
+                    toast.AddToastInput(selBox);
+                }
+                else if (ht["Type"].Equals("Button"))
+                {
+                    ToastButton toastButton = new ToastButton();
+                    string[] buttonArgs = (string[])ht["Args"];
+                    toastButton.SetContent(buttonArgs[0]);
+                    if (buttonArgs.Length >= 2)
+                    {
+                        toastButton.AddArgument("arguments", programpath + "|" + buttonArgs[1]);
                     }
                     else
-                        button1b.AddArgument("arguments", programPath + "|" + "[!Log \"Toasted from Raintoast!\"]");
-                    button1b.ActivationType = ToastActivationType.Foreground;
-                    toastContent.AddButton(button1b);
+                    {
+                        toastButton.AddArgument("arguments", programpath + "|" + "[!Log \"Toasted from Raintoast!\"]");
+                    }
+                    toast.AddButton(toastButton);
                 }
             }
-            if (propertyHash.ContainsKey("Argument"))
-                toastContent.AddArgument("arguments", programPath + "|" + (string)propertyHash["Argument"]);
-            else
-                toastContent.AddArgument("arguments", programPath + "|" + "[!Log \"Toasted from Raintoast!\"]");
-            toastContent.Show();
+            if (!terminated)
+                toast.Show();
         }
     }
 }
