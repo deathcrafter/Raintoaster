@@ -25,8 +25,9 @@ Some important points before beginning:
 ```
 
 ### Parameter:
-- This the argument that will be passed down to the program. Default is `[!Log \"Toasted from Raintoast!\"]`
+- This the argument that will be passed down to the program if the body of the toast is clicked. Default is `[!Log \"Toasted from Raintoast!\"]`
 - Make sure you provide a parameter if your `programpath` is different than Rainmeter.
+- InputBox or SelectionBox not supported.
 - Syntax: `--parameter "<parameters>"`
 - Example:
 ```cmd
