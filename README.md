@@ -86,11 +86,12 @@ Some important points before beginning:
 
 ### Input Box:
 - Get text input from user. New lines will be replaced by `#CRLF#`.
-- Use `$<id>$` in button parameter to get the input.
+- Use `$<id>$` in button parameter to get the input, newline characters will be resolved normally.
+- Use `$<id>:CRLF$` in button parameter to get the result with newline characters resolved to #CRLF#. Especially useful with **!WriteKeyValue**.
 - Syntax: `--inputbox "<id>" "<defaulttext>"`
 - Example:
 ```cmd
---inputbox "name" "Enter your name" --button "Okay" "[!Log \"Your name is $name$\"]"
+--inputbox "name" "Enter your name" --button "Okay" "[!SetOption MeterString Text \"Your name is $name$\" \"#CURRENTCONFIG#\"][!WriteKeyValue MeterString Text \"Your name is $name:CRLF$\" \"#CURRENTPATH##CURRENTFILE#\"]"
 ```
 
 ### Selection Box:
@@ -113,9 +114,15 @@ Some important points before beginning:
 Update = 1000
 AccurateText = 1
 
+[Metadata]
+Author = death.crafter
+Version = 1.0.0.1
+License = Attribution 4.0 International (CC BY 4.0)
+Information = Example skin for Raintoaster
+
 [Variables]
-Name =
-AgeGroup =
+Name =death.crafter
+AgeGroup =Youth
 
 ;Notification content
 Program = --programpath "#PROGRAMPATH#Rainmeter.exe"
@@ -124,8 +131,8 @@ Info = --text "This is a test run of the Raintoaster addon."
 Info2 = --text "Please provide the requested info."
 Logo = --logo "Assets\myLogo.png"
 InputBox = --inputbox "name" "Enter your name"
-SelectionBox = --selectionbox "agegroup" "Children|Below 14" "Youth|15-28" "Middle|29-48" "Old|Above49"
-Button = --button "Okay" "[!SetVariable Name \"$name$\" \"#CURRENTCONFIG#\"][!SetVariable AgeGroup \"$agegroup$\" \"#CURRENTCONFIG#\"][!Update \"#CURRENTCONFIG#\"]"
+SelectionBox = --selectionbox "agegroup" "&default;Not provided|Please select age" "Children|Below 14" "Youth|15-28" "Middle|29-48" "Old|Above49"
+Button = --button "Okay" "[!SetVariable Name \"$name$\" \"#CURRENTCONFIG#\"][!SetVariable AgeGroup \"$agegroup$\" \"#CURRENTCONFIG#\"][!WriteKeyValue Variables Name \"$name:CRLF$\" \"#CURRENTPATH##CURRENTFILE#\"][!WriteKeyValue Variables AgeGroup \"$agegroup:CRLF$\" \"#CURRENTPATH##CURRENTFILE#\"][!Update \"#CURRENTCONFIG#\"]"
 Button2 = --button "Cancel" "[!Log \"No information provided\"]"
 
 [Toaster]
@@ -147,5 +154,5 @@ LeftMouseUpAction = [!CommandMeasure Toaster Run]
 ## Result
 
 
-https://user-images.githubusercontent.com/77834863/135673411-96671181-6844-4b1c-85d6-128cf5ac5398.mp4
+https://user-images.githubusercontent.com/77834863/135707653-0c57ed4f-b74a-4c4f-9e1c-71bb3a7094d1.mp4
 
