@@ -58,7 +58,9 @@ namespace Toaster
 
                     foreach (KeyValuePair<string, object> pair in userInput)
                     {
-                        programArgs[1] = programArgs[1].Replace("$" + pair.Key + "$", (string)pair.Value);
+                        string arg = pair.Value.ToString();
+                        programArgs[1] = programArgs[1].Replace("$" + pair.Key + "$", arg.Replace("\r", "\n"));
+                        programArgs[1] = programArgs[1].Replace("$" + pair.Key + ":CRLF$", arg.Replace("\r", "#CRLF#"));
                     }
 
                     rainmeter.StartInfo.Arguments = programArgs[1];

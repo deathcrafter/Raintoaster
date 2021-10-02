@@ -12,12 +12,14 @@
     <NoWin32Manifest>true</NoWin32Manifest>
     <DebugType>embedded</DebugType>
     <Company>death.crafter</Company>
-    <Description>An application to toast notifications for Rainmeter desktop customization tool.</Description>
+    <Description>An add-on to toast notifications for Rainmeter desktop customization tool.</Description>
     <Copyright>©️2021, death.crafter</Copyright>
     <PackageProjectUrl>https://github.com/deathcrafter/Raintoaster</PackageProjectUrl>
     <RepositoryUrl>https://github.com/deathcrafter/Raintoaster</RepositoryUrl>
     <PackageTags>Rainmeter; Toast_notification</PackageTags>
     <PackageReleaseNotes>Init</PackageReleaseNotes>
+    <AssemblyVersion>1.0.0.1</AssemblyVersion>
+    <FileVersion>1.0.0.1</FileVersion>
   </PropertyGroup>
 
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|AnyCPU'">

@@ -1,6 +1,5 @@
 F:\Raintoaster\Toaster\bin\Release\net48\Raintoaster.exe.config
 F:\Raintoaster\Toaster\bin\Release\net48\Raintoaster.exe
-F:\Raintoaster\Toaster\obj\Release\net48\Raintoaster.csproj.AssemblyReference.cache
 F:\Raintoaster\Toaster\obj\Release\net48\Raintoaster.csproj.SuggestedBindingRedirects.cache
 F:\Raintoaster\Toaster\obj\Release\net48\Raintoaster.GeneratedMSBuildEditorConfig.editorconfig
 F:\Raintoaster\Toaster\obj\Release\net48\Raintoaster.AssemblyInfoInputs.cache
@@ -8,3 +7,4 @@ F:\Raintoaster\Toaster\obj\Release\net48\Raintoaster.AssemblyInfo.cs
 F:\Raintoaster\Toaster\obj\Release\net48\Raintoaster.csproj.CoreCompileInputs.cache
 F:\Raintoaster\Toaster\obj\Release\net48\Raintoaster.csproj.Fody.CopyLocal.cache
 F:\Raintoaster\Toaster\obj\Release\net48\Raintoaster.exe
+F:\Raintoaster\Toaster\obj\Release\net48\Raintoaster.csproj.AssemblyReference.cache
